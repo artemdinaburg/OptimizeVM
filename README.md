@@ -22,7 +22,9 @@ From an elevated command prompt, run `OptimizeVM.bat`.
 
 All actions are logged to `OptimizeVM.log`.
 
-**Reboot** after the script finishes. 
+Defragment the VM's disk.
+
+**Restart the VM**
 
 ## License 
 
