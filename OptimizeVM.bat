@@ -65,6 +65,15 @@ dism /NoRestart /online /Disable-Feature /FeatureName:Printing-XPSServices-Featu
 echo 	Windows Search
 dism /NoRestart /online /Disable-Feature /FeatureName:SearchEngine-Client-Package >>OptimizeVM.log 2>&1
 
+echo Deleting all Volume Shadow Copies
+vssadmin delete shadows /All /Quiet >>OptimizeVM.log 2>&1
+
+echo Disabling System Restore on C:
+Powershell disable-computerrestore -drive c:\ >>OptimizeVM.log 2>&1
+
+echo Stopping Superfetch
+net stop "sysmain" >>OptimizeVM.log 2>&1
+
 echo Disabling Last Access for NTFS
 fsutil behavior set DisableLastAccess 1 >>OptimizeVM.log 2>&1
 
@@ -73,18 +82,6 @@ reg ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" 
 
 echo Disabling IPv6
 reg ADD "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" /v DisabledComponents /t REG_DWORD /d 0xFFFFFFFF /f >>OptimizeVM.log 2>&1
-
-reg load "hku\temp" "%USERPROFILE%\..\Default User\NTUSER.DAT" >>OptimizeVM.log 2>&1
-
-echo Setting Wallpaper to None
-reg ADD "hku\temp\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v Wallpaper /d " " /f >>OptimizeVM.log 2>&1
-
-echo Disabling Windows RSS feeds
-reg ADD "hku\temp\Software\Microsoft\Feeds" /v SyncStatus /t REG_DWORD /d 0x0 /f >>OptimizeVM.log 2>&1
-
-echo Disabling Action Center
-reg ADD "hku\temp\Software\Microsoft\WIndows\CurrentVersion\Policies\Explorer" /v HideSCAHealth /t REG_DWORD /d 0x1 /f >>OptimizeVM.log 2>&1
-reg unload "hku\temp" >>OptimizeVM.log 2>&1
 
 echo Disabling IE First Run Customization
 reg ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Internet Explorer\Main" /v DisableFirstRunCustomize /t REG_DWORD /d 0x1 /f >>OptimizeVM.log 2>&1
@@ -224,20 +221,11 @@ Powershell Set-Service 'UI0Detect' -startuptype "disabled" >>OptimizeVM.log 2>&1
 echo Disabling Graphical Boot Screen
 bcdedit /set BOOTUX disabled >>OptimizeVM.log 2>&1
 
-echo Deleting all Volume Shadow Copies
-vssadmin delete shadows /All /Quiet >>OptimizeVM.log 2>&1
-
-echo Disabling System Restore on C:
-Powershell disable-computerrestore -drive c:\ >>OptimizeVM.log 2>&1
-
 echo Disabling Firewall
 netsh advfirewall set allprofiles state off >>OptimizeVM.log 2>&1
 
 echo Disabling Hibernation
 powercfg -H OFF >>OptimizeVM.log 2>&1
-
-echo Stopping Superfetch
-net stop "sysmain" >>OptimizeVM.log 2>&1
 
 echo Removing Scheduled Tasks
 
@@ -260,19 +248,81 @@ schtasks /change /TN "\Microsoft\Windows Defender\MP Scheduled Scan" /Disable >>
 echo 	Windows System Assesment
 schtasks /change /TN "\Microsoft\Windows\Maintenance\WinSAT" /Disable >>OptimizeVM.log 2>&1
 
-echo Changing Explorer Preferences
+REM 
+REM Per-User settings
+REM for current user
+REM
+
+echo Changing per-user Settings
+echo    ... for the current user
+
+echo    Changing theme to "Classic"
+rundll32.exe %SystemRoot%\system32\shell32.dll,Control_RunDLL %SystemRoot%\system32\desk.cpl desk,@Themes /Action:OpenTheme /file:"%SystemRoot%\Resources\Ease of Access Themes\classic.theme" >>OptimizeVM.log 2>&1
+
+echo    Setting sound scheme to "No Sounds"
+reg ADD "HKCU\AppEvents\Schemes" /ve /t REG_SZ /f /d ".NONE" >>OptimizeVM.log 2>&1
+
+echo    Setting Wallpaper to None
+reg ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v Wallpaper /d " " /f >>OptimizeVM.log 2>&1
+
+echo    Disabling Windows RSS feeds
+reg ADD "HKCU\Software\Microsoft\Feeds" /v SyncStatus /t REG_DWORD /d 0x0 /f >>OptimizeVM.log 2>&1
+
+echo    Disabling Action Center
+reg ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v HideSCAHealth /t REG_DWORD /d 0x1 /f >>OptimizeVM.log 2>&1
+
+echo    Setting sound scheme to "No Sounds"
+reg ADD "HKCU\AppEvents\Schemes" /ve /t REG_SZ /f /d ".NONE"
+
+echo    Changing Explorer Preferences
+
+echo 	    Show Hidden Files
+reg ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden /t REG_DWORD /d 0x1 /f >>OptimizeVM.log 2>&1
+
+echo 	    Show File Extension
+reg ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v HideFileExt /t REG_DWORD /d 0x0 /f >>OptimizeVM.log 2>&1
+
+echo 	    Show Drives With No Media
+reg ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v HideDrivesWithNoMedia /t REG_DWORD /d 0x0 /f >>OptimizeVM.log 2>&1
+
+echo 	    Disable Simple Sharing
+reg ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v SharingWizardOn /t REG_DWORD /d 0x0 /f >>OptimizeVM.log 2>&1
+
+REM 
+REM Per-User settings
+REM for new users
+REM
+
+echo Changing per-user Settings
+echo    ... for all new users
+
 reg load "hku\temp" "%USERPROFILE%\..\Default User\NTUSER.DAT" >>OptimizeVM.log 2>&1
 
-echo 	Show Hidden Files
+echo    Setting Wallpaper to None
+reg ADD "hku\temp\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v Wallpaper /d " " /f >>OptimizeVM.log 2>&1
+
+echo    Disabling Windows RSS feeds
+reg ADD "hku\temp\Software\Microsoft\Feeds" /v SyncStatus /t REG_DWORD /d 0x0 /f >>OptimizeVM.log 2>&1
+
+echo    Disabling Action Center
+reg ADD "hku\temp\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v HideSCAHealth /t REG_DWORD /d 0x1 /f >>OptimizeVM.log 2>&1
+
+echo    Setting sound scheme to "No Sounds"
+reg ADD "hku\temp\AppEvents\Schemes" /ve /t REG_SZ /f /d ".NONE"
+
+echo    Changing Explorer Preferences
+
+echo 	    Show Hidden Files
 reg ADD "hku\temp\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden /t REG_DWORD /d 0x1 /f >>OptimizeVM.log 2>&1
 
-echo 	Show File Extension
+echo 	    Show File Extension
 reg ADD "hku\temp\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v HideFileExt /t REG_DWORD /d 0x0 /f >>OptimizeVM.log 2>&1
 
-echo 	Show Drives With No Media
+echo 	    Show Drives With No Media
 reg ADD "hku\temp\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v HideDrivesWithNoMedia /t REG_DWORD /d 0x0 /f >>OptimizeVM.log 2>&1
 
-echo 	Disable Simple Sharing
+echo 	    Disable Simple Sharing
 reg ADD "hku\temp\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v SharingWizardOn /t REG_DWORD /d 0x0 /f >>OptimizeVM.log 2>&1
+
 reg unload "hku\temp" >>OptimizeVM.log 2>&1
 
