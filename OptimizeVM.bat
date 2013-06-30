@@ -29,41 +29,41 @@ time /t >> OptimizeVM.log
 echo Disabling Windows Features...
 
 echo 	Windows Gadget Platform
-dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:WindowsGadgetPlatform >>OptimizeVM.log 2>&1
 
 echo 	Windows Media Player
-dism /online /Disable-Feature /FeatureName:WindowsMediaPlayer >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:WindowsMediaPlayer >>OptimizeVM.log 2>&1
 
 echo 	Windows Media Playback
-dism /online /Disable-Feature /FeatureName:MediaPlayback >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:MediaPlayback >>OptimizeVM.log 2>&1
 
 echo 	Windows Media Center
-dism /online /Disable-Feature /FeatureName:MediaCenter >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:MediaCenter >>OptimizeVM.log 2>&1
 
 echo 	Optical Media Disc
-dism /online /Disable-Feature /FeatureName:OpticalMediaDisc >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:OpticalMediaDisc >>OptimizeVM.log 2>&1
 
 echo 	.NET famework
-dism /online /Disable-Feature /FeatureName:NetFx3 >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:NetFx3 >>OptimizeVM.log 2>&1
 
 echo 	Tablet PC Components
-dism /online /Disable-Feature /FeatureName:TabletPCOC >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:TabletPCOC >>OptimizeVM.log 2>&1
 
 echo 	Printing Features
-dism /online /Disable-Feature /FeatureName:Printing-Foundation-Features >>OptimizeVM.log 2>&1
-dism /online /Disable-Feature /FeatureName:Printing-Foundation-InternetPrinting-Client >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:Printing-Foundation-Features >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:Printing-Foundation-InternetPrinting-Client >>OptimizeVM.log 2>&1
 
 echo 	Fax Services
-dism /online /Disable-Feature /FeatureName:FaxServicesClientPackage >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:FaxServicesClientPackage >>OptimizeVM.log 2>&1
 
 echo 	MSRDC
-dism /online /Disable-Feature /FeatureName:MSRDC-Infrastructure >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:MSRDC-Infrastructure >>OptimizeVM.log 2>&1
 
 echo 	XPS Support
-dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:Printing-XPSServices-Features >>OptimizeVM.log 2>&1
 
 echo 	Windows Search
-dism /online /Disable-Feature /FeatureName:SearchEngine-Client-Package >>OptimizeVM.log 2>&1
+dism /NoRestart /online /Disable-Feature /FeatureName:SearchEngine-Client-Package >>OptimizeVM.log 2>&1
 
 echo Disabling Last Access for NTFS
 fsutil behavior set DisableLastAccess 1 >>OptimizeVM.log 2>&1
